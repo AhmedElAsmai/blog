@@ -20,9 +20,15 @@ def login():
             return redirect('/index')
     return render_template('login.html')
 
-# @app.route('/register')
-# def register():
-#     return render_template('register.html')
+@app.route('/register', methods = ['GET','POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if db.registration(username, password):
+            return redirect('/login')
+    return render_template('register.html')
 
 class db_class:
     def messages(self, start_index=1, num_rows=20):
@@ -43,6 +49,20 @@ class db_class:
             cursor.close()       
 
         return user
+    
+    def registration(self, username, password):
+        with sqlite3.connect('blog.db') as conn:
+            cursor = conn.cursor()       
+            cursor.execute("SELECT COUNT(*) FROM users WHERE username = ?", (username,))
+            existing_user = cursor.fetchone()[0]
+            if existing_user > 0:
+                return False
+            cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+            conn.commit()
+            cursor.close()       
+            return True
+        
+
         
 
 db = db_class()
