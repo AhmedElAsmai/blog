@@ -1,15 +1,22 @@
 from flask import Flask, render_template, url_for, request, redirect
 import sqlite3
+
+logged_in = False                                                           #LOG IN!!!!!!!
+
 app = Flask(__name__)
 
 @app.route('/')
 @app.route('/index')
 def index():
-    messages = db.messages() 
-    return render_template('index.html',messages=messages)
+    if logged_in == True:
+        messages = db.messages() 
+        return render_template('index.html',messages=messages)
+    return redirect('/login')
 
 @app.route('/login',methods=['GET', 'POST'])
 def login():
+    global logged_in
+    logged_in = False
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -17,8 +24,10 @@ def login():
         authentication = db.authentication(username, password)
         
         if authentication:
+            logged_in = True
             return redirect('/index')
     return render_template('login.html')
+
 
 @app.route('/register', methods = ['GET','POST'])
 def register():
