@@ -1,0 +1,8 @@
+- LOGIN
+    - make it redirect if not loggedin
+- CHAT
+    - make chat where chat histroy with numbers (numbers = table)
+
+
+[later]
+- make it so chats dont load in one time (make pages)

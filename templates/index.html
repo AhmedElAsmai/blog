@@ -5,11 +5,20 @@
 </head>
 <a href="/login">log out</a>
 <div style="padding-bottom: 10px;"></div>
+<fieldset style="display: inline-block">
+<form action="/index" method="POST">
+    <label for="row">row number: </label>
+    <input type="text" name="row" style="width: 20px;"><br>
+</form>
+</fieldset>
 <body>
-    
-    {% for row in messages %}
-    <p>{{row[0]}} says:<b> {{row[1]}}</b></p>
-    {% endfor %}
+    <a href="/login">log out</a>
+    <div style="padding-bottom: 10px;"></div>
+    <div style="max-height: 450px; overflow-y: auto;">
+        {% for row in messages %}
+            <p>{{row[0]}} says:<b> {{row[1]}}</b></p>
+        {% endfor %}
+    </div>
 </body>
 </html>
 

@@ -1,15 +1,18 @@
 from flask import Flask, render_template, url_for, request, redirect
 import sqlite3
 
-logged_in = False                                                           #LOG IN!!!!!!!
+logged_in = True                                                        #LOG IN!!!!!!!
 
 app = Flask(__name__)
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     if logged_in == True:
-        messages = db.messages() 
+        row = 1
+        if request.method == 'POST':
+            row = int(request.form['row'])
+        messages = db.messages(row) 
         return render_template('index.html',messages=messages)
     return redirect('/login')
 
@@ -38,6 +41,9 @@ def register():
         if db.registration(username, password):
             return redirect('/login')
     return render_template('register.html')
+
+#DB CLASS
+
 
 class db_class:
     def messages(self, start_index=1, num_rows=20):
@@ -71,9 +77,6 @@ class db_class:
             cursor.close()       
             return True
         
-
-        
-
 db = db_class()
 
 
