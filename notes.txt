@@ -1,9 +1,5 @@
 CHAT
-- add chat feature
-
-
-
-
-
+- modify viewing chat history
+- make it so it shows 
 
 

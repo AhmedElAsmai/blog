@@ -10,14 +10,14 @@
 
 <fieldset style="display: inline-block">
 <form action="/index" method="POST">
-    <label for="row">chat number: {{ row }} </label>
-    <input type="text" name="row" style="width: 20px;"><br>
+    <label for="date">chat date: {{ date }} </label>
+    <input type="text" name="date" style="width: 50px;"><br>
 </form>
 </fieldset>
 
 <body>
     <div style="padding-bottom: 10px;"></div>
-    <div style="max-height: 450px; overflow-y: auto;">
+    <div id="chatbox" style="max-height: 450px; overflow-y: auto;">
         {% for row in messages %}
             <p>{{row[0]}} says:<b> {{row[1]}}</b></p>
         {% endfor %}
@@ -25,9 +25,26 @@
 </body>
 
 <form action="/index" method="POST">
-    <textarea name="chatbox" style="width: 600px; max-width: 600px; height: 100px; max-height: 100px;" maxlength="10000" placeholder="Type here..."></textarea><br>
+    <textarea name="chatbox" id="inputText" style="width: 600px; max-width: 600px; height: 100px; max-height: 100px;" maxlength="10000" placeholder="Type here..."></textarea><br>
     <input type="submit" value="enter">
 </form>
 
-</html>
+<script>
+    // Function to scroll to the bottom of the chatbox
+    function scrollToBottom() {
+        var chatbox = document.getElementById("chatbox");
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
 
+    // Automatically scroll to bottom when the page loads
+    window.onload = scrollToBottom;
+
+    // Automatically scroll to bottom when new content is added
+    document.querySelector('form').addEventListener('submit', function() {
+        setTimeout(function() {
+            scrollToBottom();
+        }, 0);
+    });
+</script>
+
+</html>
