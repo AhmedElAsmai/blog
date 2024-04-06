@@ -1,25 +1,38 @@
 from flask import Flask, render_template, url_for, request, redirect
 import sqlite3
+import datetime
 
 logged_in = True                                                        #LOG IN!!!!!!!
-
+current_user = 'test'              #turn off when debug off
 app = Flask(__name__)
 
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    global logged_in
+    print('logedin: ',logged_in)
+
     if logged_in == True:
         row = 1
         if request.method == 'POST':
-            row = int(request.form['row'])
-        messages = db.messages(row) 
-        return render_template('index.html',messages=messages)
+            if 'row' in request.form:
+                row = int(request.form['row'])
+                messages = db.messages(row) 
+                return render_template('index.html', messages=messages, row=row)
+            
+            if 'chatbox' in request.form:
+                chat = request.form['chatbox']
+                db.chatbox(chat)
+
+        messages = db.messages()
+        return render_template('index.html',messages=messages, row = row)
     return redirect('/login')
 
 @app.route('/login',methods=['GET', 'POST'])
 def login():
     global logged_in
-    logged_in = False
+    global current_user
+    logged_in = False                                          
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -28,6 +41,7 @@ def login():
         
         if authentication:
             logged_in = True
+            current_user = username
             return redirect('/index')
     return render_template('login.html')
 
@@ -46,14 +60,13 @@ def register():
 
 
 class db_class:
-    def messages(self, start_index=1, num_rows=20):
-        
+    def messages(self, start_index=1, num_rows=13):
         with sqlite3.connect('blog.db') as conn:
             cursor = conn.cursor()       
-            cursor.execute("SELECT * FROM messages LIMIT ? OFFSET ?", (num_rows, start_index - 1))  
-            messages = cursor.fetchall()
+            cursor.execute("SELECT * FROM messages ORDER BY time DESC LIMIT ? OFFSET ?", (num_rows, start_index - 1))  
+            messages = list(reversed(cursor.fetchall()))
             cursor.close()
-        
+            print(messages)
         return messages
     
     def authentication(self, username, password):
@@ -62,7 +75,6 @@ class db_class:
             cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))  
             user = cursor.fetchone()
             cursor.close()       
-
         return user
     
     def registration(self, username, password):
@@ -76,6 +88,17 @@ class db_class:
             conn.commit()
             cursor.close()       
             return True
+        
+    def chatbox(self, chat):
+        timestamp = datetime.datetime.now()
+        sql_formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S') #formats the date for SQL
+
+        with sqlite3.connect('blog.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO messages (username, message, time) VALUES (?, ?, ?)", (current_user, chat, timestamp))
+            conn.commit()
+            cursor.close() 
+        
         
 db = db_class()
 

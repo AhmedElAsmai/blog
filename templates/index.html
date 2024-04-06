@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Home</title>
 </head>
+
 <a href="/login">log out</a>
 <div style="padding-bottom: 10px;"></div>
+
 <fieldset style="display: inline-block">
 <form action="/index" method="POST">
-    <label for="row">row number: </label>
+    <label for="row">chat number: {{ row }} </label>
     <input type="text" name="row" style="width: 20px;"><br>
 </form>
 </fieldset>
+
 <body>
-    <a href="/login">log out</a>
     <div style="padding-bottom: 10px;"></div>
     <div style="max-height: 450px; overflow-y: auto;">
         {% for row in messages %}
@@ -20,5 +23,11 @@
         {% endfor %}
     </div>
 </body>
+
+<form action="/index" method="POST">
+    <textarea name="chatbox" style="width: 600px; max-width: 600px; height: 100px; max-height: 100px;" maxlength="10000" placeholder="Type here..."></textarea><br>
+    <input type="submit" value="enter">
+</form>
+
 </html>
 
